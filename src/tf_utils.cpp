@@ -95,9 +95,8 @@ void DeleteGraph(TF_Graph* graph) {
   TF_DeleteGraph(graph);
 }
 
-TF_Session* CreateSession(TF_Graph* graph) {
+TF_Session* CreateSession(TF_Graph* graph, TF_SessionOptions* options) {
   TF_Status* status = TF_NewStatus();
-  TF_SessionOptions* options = TF_NewSessionOptions();
   TF_Session* session = TF_NewSession(graph, options, status);
   TF_DeleteSessionOptions(options);
 
@@ -232,12 +231,35 @@ TF_SessionOptions* CreateSessionOptions(double gpu_memory_fraction) {
   TF_SetConfig(options, config.data(), config.size(), status);
 
   if (TF_GetCode(status) != TF_OK) {
-    TF_DeleteStatus(status);
-    return nullptr;
+    options = TF_NewSessionOptions();
   }
 
   TF_DeleteStatus(status);
   return options;
 }
+
+std::vector<int64_t> GetTensorShape( TF_Graph* graph, const TF_Output& output ) {
+  auto status = TF_NewStatus();
+
+  int num_dims = TF_GraphGetTensorNumDims( graph, output, status );
+
+  std::vector<int64_t> out_dims(num_dims);
+  TF_GraphGetTensorShape( graph, output, out_dims.data(), num_dims, status );
+
+  TF_DeleteStatus( status );
+
+  return out_dims;
+}
+
+std::vector< std::vector<int64_t> > GetTensorShape( TF_Graph* graph, const std::vector<TF_Output>& output ) {
+  std::vector< std::vector<int64_t> > ret;
+
+  for ( auto& out : output ) {
+    ret.push_back( GetTensorShape( graph, out ) );
+  }
+
+  return ret;
+}
+
 
 } // namespace tf_utils

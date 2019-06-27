@@ -40,7 +40,7 @@ TF_Graph* LoadGraph(const char* graphPath);
 
 void DeleteGraph(TF_Graph* graph);
 
-TF_Session* CreateSession(TF_Graph* graph);
+TF_Session* CreateSession(TF_Graph* graph, TF_SessionOptions* = TF_NewSessionOptions());
 
 void DeleteSession(TF_Session* session);
 
@@ -100,6 +100,10 @@ std::vector<std::vector<T>> GetTensorsData(const std::vector<TF_Tensor*>& tensor
 }
 
 TF_SessionOptions* CreateSessionOptions(double gpu_memory_fraction);
+
+std::vector<int64_t> GetTensorShape( TF_Graph* graph, const TF_Output& output );
+  
+std::vector< std::vector<int64_t> > GetTensorShape( TF_Graph* graph, const std::vector<TF_Output>& output );
 
 } // namespace tf_utils
 
