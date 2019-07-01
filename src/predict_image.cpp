@@ -59,7 +59,7 @@ int main() {
   std::vector<TF_Tensor*> output_tensors = { nullptr };
 
   // create TF session:
-  auto session = tf_utils::CreateSession( graph, CreateSessionOptions( 0.3f ) );
+  auto session = tf_utils::CreateSession( graph, tf_utils::CreateSessionOptions( 0.3f ) );
   if ( session == nullptr ) {
     std::cout << "Can't create session" << std::endl;
     return 2;
@@ -98,8 +98,8 @@ int main() {
   }
 
   tf_utils::DeleteGraph(graph);
-  tf_utils::DeleteTensor(input_tensor);
-  tf_utils::DeleteTensor(output_tensor);
+  tf_utils::DeleteTensors(input_tensors);
+  tf_utils::DeleteTensors(output_tensors);
     
   return 0;
 }
